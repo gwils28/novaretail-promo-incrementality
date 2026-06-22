@@ -1,0 +1,54 @@
+[project]
+name = "novaretail"
+version = "0.1.0"
+description = "NovaRetail: causal incrementality of grocery promotions on the Favorita panel (counterfactual forecasts validated by placebos, synthetic control, double ML, Dagster pipeline, monitoring)"
+readme = "README.md"
+authors = [{ name = "wilson goma" }]
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "causal-ts @ git+https://github.com/gwils28/time_series_causal_statistics@388c1a3234d72c6f28574a58d508e10fbcb0f349",
+    "numpy>=2.3,<3",
+    "pandas>=2.2,<3",
+    "pyarrow>=17",
+    "scipy>=1.15",
+    "statsmodels>=0.14.5",
+    "scikit-learn>=1.6",
+    "matplotlib>=3.10",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+nr = "novaretail.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+notebooks = ["jupyter", "nbconvert", "nbformat>=5", "ipykernel"]
+# Double machine learning cross-check (hand-rolled DML lives in the package; this group is the reference library)
+dml = ["doubleml>=0.9"]
+# Part D: orchestration and model registry, local mode only
+pipeline = ["dagster>=1.9", "dagster-webserver>=1.9", "mlflow>=2.20"]
+
+[tool.uv]
+default-groups = ["dev", "notebooks"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/novaretail"]
+
+[tool.ruff]
+line-length = 120
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E741", "B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: Monte Carlo studies and full-panel runs (tens of seconds or more)", "data: needs data/raw Favorita files"]
