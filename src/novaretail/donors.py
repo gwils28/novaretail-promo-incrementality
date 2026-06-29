@@ -7,7 +7,9 @@ Rules (block 3 of the tech watch, applied to Favorita):
    registry accepts for different cities and refuses for the same city);
 2. a donor is not itself in a campaign (active promotion by the detection rule) from 30 days before the start
    to the end of the post window; its background promotion level is allowed, as it is in the target;
-3. a donor has no structural zero in the window and is not a low-volume series (median below `min_median`);
+3. a donor has no structural zero in the campaign and post window, at most the tolerated share in the pre
+   period (a store-wide closure such as 1 January hits the target the same day; the gap is interpolated in the
+   regressor and the day is missing in the target), and is not a low-volume series (median below `min_median`);
 4. the pool is capped by the pre-period correlation of weekly differences with the target, and the cap is a
    reported choice: the sensitivity analysis re-estimates with pools of several sizes.
 Fit quality never removes a donor that the rules admit, and never admits one that they refuse.
@@ -83,7 +85,8 @@ def eligible_donors(wide_sales_raw: pd.DataFrame, wide_promo: pd.DataFrame, usab
         reason = "kept"
         if same_store and f in linked:
             reason = "substitution_edge"
-        elif (~usable.loc[pre_start:post_end, unit]).any():
+        elif (~usable.loc[start:post_end, unit]).any() or \
+                (~usable.loc[pre_start:start, unit]).mean() > detection.max_structural_share:
             reason = "structural_zeros"
         elif wide_sales_raw.loc[pre_start:start, unit].median() < rule.min_median:
             reason = "low_volume"
