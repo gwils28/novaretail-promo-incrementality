@@ -45,11 +45,22 @@ def regressors(calendar: pd.DataFrame, use_oil: bool = True) -> pd.DataFrame:
     return X.loc[:, X.std() > 0]  # a constant column (no regional holiday for this store) is dropped
 
 
-def promo_intensity(wide_promo: pd.DataFrame, q: float = 0.95) -> pd.DataFrame:
-    """`onpromotion` scaled by the store-family's upper quantile: a unit-free intensity, roughly the promoted share.
+def promo_intensity(wide_promo: pd.DataFrame, q: float = 0.95, by_family: bool = True,
+                    cap: float = 2.0) -> pd.DataFrame:
+    """`onpromotion` scaled by the upper quantile of its positive values: a unit-free intensity, roughly the share
+    of the family's items on promotion.
 
     Favorita gives no item count per family, so the promoted share is not observable; the scaled count is the
-    proxy used by the dose-response analysis and is reported as such.
+    proxy used by the dose-response analysis and is reported as such. The scale is the family's (pooled over
+    stores, since a family has the same assortment size everywhere) so that a store with rare campaigns is not
+    scaled by its own background.
     """
-    scale = wide_promo.quantile(q).replace(0, np.nan)
-    return (wide_promo / scale).fillna(0).clip(upper=1.5)
+    pos = wide_promo.where(wide_promo > 0)
+    if by_family:
+        fam = wide_promo.columns.get_level_values(1)
+        scale = pd.Series({f: np.nanquantile(pos.loc[:, fam == f].values, q) for f in fam.unique()})
+        scale = pd.Series(scale.reindex(fam).values, index=wide_promo.columns)
+    else:
+        scale = pos.quantile(q)
+    scale = scale.replace(0, np.nan)
+    return (wide_promo / scale).fillna(0).clip(upper=cap)

@@ -97,7 +97,7 @@ def test_features_scale_and_regressors(synth_panel):
     y = unit_series(to_wide(panel), 1, "GROCERY I")
     assert y.loc["2016-01-01"] != y.loc["2016-01-01"]  # NaN on a closed day
     inten = promo_intensity(wide_promo)
-    assert inten.max().max() <= 1.5 and inten.min().min() >= 0
+    assert inten.max().max() <= 2.0 and inten.min().min() >= 0
     from novaretail.calendar import calendar_features
     cal = calendar_features(y.index, sp.holidays, sp.stores.iloc[0], sp.oil)
     X = regressors(cal)
