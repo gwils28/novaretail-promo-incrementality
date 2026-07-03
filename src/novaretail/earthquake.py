@@ -29,7 +29,7 @@ def store_totals(panel: pd.DataFrame) -> pd.DataFrame:
     p = panel[~panel["before_opening"]]
     tot = p.groupby(["date", "store_nbr"], observed=True)["sales"].sum(min_count=1).unstack("store_nbr")
     closed = p.groupby(["date", "store_nbr"], observed=True)["closed"].all().unstack("store_nbr")
-    return tot.where(~closed.fillna(True))
+    return tot.where(~closed.astype("boolean").fillna(True).astype(bool))
 
 
 def quake_units(stores: pd.DataFrame, totals: pd.DataFrame, pre_days: int = 180) -> tuple[list[int], list[int]]:
@@ -84,9 +84,24 @@ def run_quake(panel: pd.DataFrame, stores: pd.DataFrame, holidays: pd.DataFrame,
                       "rel_upper": s0["rel_upper"], "p_tail": s0["p_tail"], "excludes_zero": s0["excludes_zero"],
                       "is_treated": True})
     weekly = weekly_effects(res)
+    s0.update(units_summary(res))
     return {"treated": treated, "donors": donors, "result": res, "summary": s0, "sweep": sweep,
             "space": pd.DataFrame(space).set_index("unit"), "weekly": weekly, "frame": frame,
             "by_family": quake_by_family(panel, stores, treated, donors, holidays, pre_days, post_days, nsim // 4)}
+
+
+def units_summary(res, alpha: float = 0.05) -> dict:
+    """Relative and absolute effect in sales units over the whole post window, from the simulated paths."""
+    y = np.expm1(res.y_post.values)
+    paths = np.expm1(res.paths)
+    cf = paths.sum(axis=1)
+    eff = y.sum() - cf
+    lo, hi = np.quantile(eff, [alpha / 2, 1 - alpha / 2])
+    rel = eff / cf
+    rlo, rhi = np.quantile(rel, [alpha / 2, 1 - alpha / 2])
+    return {"units_effect": float(eff.mean()), "units_lower": float(lo), "units_upper": float(hi),
+            "units_rel": float(rel.mean()), "units_rel_lower": float(rlo), "units_rel_upper": float(rhi),
+            "units_excludes_zero": bool(lo > 0 or hi < 0)}
 
 
 def weekly_effects(res) -> pd.DataFrame:

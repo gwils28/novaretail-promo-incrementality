@@ -92,8 +92,11 @@ def build_panel(train: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     # structural zeros ---------------------------------------------------------------------------------------
     store_day = panel.groupby(["store_nbr", "date"], observed=True)["sales"].sum(min_count=1)
     opening = store_day[store_day > 0].reset_index().groupby("store_nbr")["date"].min().rename("opening")
+    # a store whose first sale comes more than a week after the start of the file opened late; the first days
+    # of an ordinary store (1 January is closed) are closures, not a late opening
+    opening = opening[opening > dates[0] + pd.Timedelta(7, unit="D")]
     panel = panel.merge(opening, on="store_nbr", how="left")
-    panel["before_opening"] = panel["date"] < panel["opening"]
+    panel["before_opening"] = (panel["date"] < panel["opening"]).fillna(False)
     sf_total = panel.groupby(["store_nbr", "family"], observed=True)["sales"].sum(min_count=1)
     never = sf_total[sf_total.fillna(0) == 0].index
     key = pd.MultiIndex.from_frame(panel[["store_nbr", "family"]])
