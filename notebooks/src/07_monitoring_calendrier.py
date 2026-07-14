@@ -117,11 +117,13 @@ plt.show()
 clean = pd.read_parquet(RESULTS / "reconciliation_clean.parquet")
 drift = pd.read_parquet(RESULTS / "reconciliation_drift.parquet")
 fig, axes = plt.subplots(1, 2, figsize=(13, 3.8), sharey=True)
+fig.suptitle("Écart mensuel entre marge réalisée et marge impliquée (rouge : alarme de dérive)", x=0.01, ha="left",
+             fontsize=11, fontweight="bold")
 for ax, rec, title in ((axes[0], clean, "grand livre propre"), (axes[1], drift, "dérive de 2 %/mois injectée")):
     x = rec.index.to_timestamp()
     ax.bar(x, rec["gap_share"] * 100, width=20, color=[viz.CRITICAL if a else viz.BLUE for a in rec["drift_alarm"]])
     ax.axhline(0, color=viz.TEXT_2, linewidth=1)
-    ax.set_title(f"Écart mensuel réalisé − impliqué, {title} ({int(rec['drift_alarm'].sum())} alarme(s))")
+    ax.set_title(f"{title} : {int(rec['drift_alarm'].sum())} alarme(s)")
     ax.set_ylabel("% de la marge impliquée")
 if rep.get("drift_injected_from"):
     t0 = pd.Period(rep["drift_injected_from"], "M").to_timestamp()
