@@ -5,7 +5,12 @@ density, re-indexed on the full calendar (the files have no row on 25 December) 
 flagged so that the modelling code can tell "nothing sold" from "nothing could be sold":
 - `before_opening`: the store had no sale at all before this date (opened later);
 - `never_sold`: the store-family has no sale over the whole sample;
+- `before_first_sale`: the store-family's first sale comes more than 30 days after the store opened (the family was
+  not yet listed in that store, or not yet recorded: 595 of 1 729 series in the Kaggle file, 8% of the rows);
 - `closed`: a store-wide zero on an otherwise open store (1 January, 25 December, local closures);
+- `zero_run`: inside a run of at least 28 consecutive days without a sale on a store-family (a recording gap or a
+  delisting: PRODUCE, for instance, has whole quarters at zero in 2014 and 2015 while the family sells thousands of
+  units a day around them; a demand zero does not last a month on a family that sells every day);
 - `promo_unknown`: before the first date with any `onpromotion > 0` in the file (the original data had NaN
   there; the competition file fills it with zeros, which is not the same information).
 Every flag is a column on the panel; nothing is imputed. A manifest (sha256, rows, date range) is written next to
@@ -101,11 +106,21 @@ def build_panel(train: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     never = sf_total[sf_total.fillna(0) == 0].index
     key = pd.MultiIndex.from_frame(panel[["store_nbr", "family"]])
     panel["never_sold"] = key.isin(never)
+    first_sale = (panel[panel["sales"].fillna(0) > 0].groupby(["store_nbr", "family"], observed=True)["date"].min()
+                  .rename("first_sale"))
+    panel = panel.merge(first_sale, on=["store_nbr", "family"], how="left")
+    store_open = panel.loc[~panel["before_opening"]].groupby("store_nbr")["date"].min().rename("store_open")
+    panel = panel.merge(store_open, on="store_nbr", how="left")
+    late_listing = (panel["first_sale"] - panel["store_open"]).dt.days > 30
+    panel["before_first_sale"] = (late_listing & (panel["date"] < panel["first_sale"])).fillna(False)
+    panel = panel.drop(columns=["first_sale", "store_open"])
     sd = panel.merge(store_day.rename("store_day_sales").reset_index(), on=["store_nbr", "date"], how="left")
     panel["closed"] = (sd["store_day_sales"].fillna(0) == 0) & ~panel["before_opening"]
     first_promo = panel.loc[panel["onpromotion"] > 0, "date"].min()
     panel["promo_unknown"] = panel["date"] < first_promo if pd.notna(first_promo) else True
-    panel["structural_zero"] = panel["before_opening"] | panel["never_sold"] | panel["closed"]
+    panel["zero_run"] = _zero_runs(panel, min_days=ZERO_RUN_DAYS)
+    panel["structural_zero"] = (panel["before_opening"] | panel["never_sold"] | panel["closed"]
+                                | panel["before_first_sale"] | panel["zero_run"])
     panel = panel.drop(columns="opening")
 
     sales = panel["sales"].fillna(0)
@@ -119,9 +134,29 @@ def build_panel(train: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
         "share_zero_intermittent": float(((sales == 0) & ~panel["structural_zero"]).sum() / len(panel)),
         "stores_opened_late": {int(k): str(v.date()) for k, v in opening.items() if v > dates[0]},
         "never_sold_pairs": int(len(never)),
+        "late_listing_pairs": int(panel.loc[panel["before_first_sale"]].groupby(["store_nbr", "family"], observed=True)
+                                  .ngroups),
+        "share_rows_before_first_sale": float(panel["before_first_sale"].mean()),
+        "share_rows_in_zero_runs": float((panel["zero_run"] & ~panel["before_first_sale"] & ~panel["before_opening"]
+                                          & ~panel["never_sold"]).mean()),
         "closed_store_days": int((panel["closed"] & ~panel["never_sold"]).sum() / max(1, len(fams))),
     }
     return panel, report
+
+
+ZERO_RUN_DAYS = 28
+
+
+def _zero_runs(panel: pd.DataFrame, min_days: int) -> pd.Series:
+    """True inside runs of at least `min_days` consecutive zero-sales days of a store-family (panel sorted by key)."""
+    p = panel.sort_values(["store_nbr", "family", "date"])
+    z = p["sales"].fillna(0) == 0
+    key = p["store_nbr"].astype(str) + "|" + p["family"].astype(str)
+    new_run = z & (~z.shift(fill_value=False) | (key != key.shift()))
+    run_id = new_run.cumsum().where(z)
+    run_len = run_id.map(run_id.value_counts())
+    flag = (run_len >= min_days).fillna(False)
+    return flag.reindex(panel.index).astype(bool)
 
 
 def to_wide(panel: pd.DataFrame, value: str = "sales", structural_as_nan: bool = True) -> pd.DataFrame:

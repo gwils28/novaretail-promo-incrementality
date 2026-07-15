@@ -63,3 +63,23 @@ def test_calendar_transfer_semantics(synth):
     assert np.isfinite(cal[["oil", "oil_lag7", "oil_grad7"]].values).all()
     manta = synth.stores[synth.stores["state"] == "Manabi"].iloc[0]
     assert calendar_features(dates, synth.holidays, manta).loc["2016-04-20", "quake_regional"] == 1
+
+
+def test_long_zero_runs_are_structural():
+    dates = pd.date_range("2015-01-01", periods=200, freq="D")
+    rows = []
+    for d in dates:
+        gap = pd.Timestamp("2015-03-01") <= d < pd.Timestamp("2015-04-15")  # a 45-day recording gap
+        rows.append({"id": 0, "date": d, "store_nbr": 1, "family": "A", "sales": 0.0 if gap else 50.0,
+                     "onpromotion": 1})
+        rows.append({"id": 1, "date": d, "store_nbr": 1, "family": "B", "sales": 0.0 if d.day == 3 else 20.0,
+                     "onpromotion": 0})
+    train = pd.DataFrame(rows)
+    train["family"] = train["family"].astype("category")
+    panel, rep = build_panel(train)
+    a = panel[panel["family"] == "A"].set_index("date")
+    b = panel[panel["family"] == "B"].set_index("date")
+    assert a.loc["2015-03-10", "zero_run"] and a.loc["2015-03-10", "structural_zero"]
+    assert not a.loc["2015-02-10", "zero_run"]
+    assert not b["zero_run"].any()  # isolated zeros are observations
+    assert rep["share_rows_in_zero_runs"] > 0

@@ -3,7 +3,8 @@
 Favorita has no price, so there is no price elasticity to estimate. What the data can identify, under the
 usual DML assumption (the intensity is as good as random given the controls), is a partially linear model
     log1p(sales) = theta * intensity + g(controls) + e,
-with controls = calendar, store and family identities, oil, and lags of the outcome. Robinson's partialling
+with controls = calendar (holidays, payday, weekday, month), store and family identities, oil, and lags of the
+outcome. Robinson's partialling
 out with cross-fitting gives theta with a valid standard error even when g is a gradient-boosted tree.
 Cross-fitting folds are blocks of time (months), not random rows, because the rows of one series are dependent.
 The lags of the outcome are a choice to be stated: they absorb the slow level of the series that a tree on
@@ -23,6 +24,7 @@ from sklearn.model_selection import GroupKFold
 from novaretail.features import CALENDAR_COLUMNS
 
 LAGS = (7, 14, 28)
+MONTHS = [f"month_{m}" for m in range(2, 13)]  # seasonality the trees cannot infer from identities and lags
 
 
 def build_table(panel: pd.DataFrame, calendars: dict[int, pd.DataFrame], intensity: pd.DataFrame,
@@ -34,7 +36,8 @@ def build_table(panel: pd.DataFrame, calendars: dict[int, pd.DataFrame], intensi
     p["y"] = np.log1p(p["sales"])
     inten = intensity.stack(["store_nbr", "family"], future_stack=True).rename("intensity").reset_index()
     p = p.merge(inten, on=["date", "store_nbr", "family"], how="left")
-    cal = pd.concat({s: c[CALENDAR_COLUMNS + ["oil_grad7"]] for s, c in calendars.items()}, names=["store_nbr", "date"])
+    cal = pd.concat({s: c[CALENDAR_COLUMNS + MONTHS + ["oil_grad7"]] for s, c in calendars.items()},
+                    names=["store_nbr", "date"])
     p = p.merge(cal.reset_index(), on=["store_nbr", "date"], how="left")
     p = p.sort_values(["store_nbr", "family", "date"])
     g = p.groupby(["store_nbr", "family"], observed=True)["y"]
@@ -47,7 +50,7 @@ def build_table(panel: pd.DataFrame, calendars: dict[int, pd.DataFrame], intensi
 
 
 def controls(table: pd.DataFrame, with_lags: bool = True) -> list[str]:
-    cols = CALENDAR_COLUMNS + ["oil_grad7", "store_code", "family_code"]
+    cols = CALENDAR_COLUMNS + MONTHS + ["oil_grad7", "store_code", "family_code"]
     if with_lags:
         cols += [c for c in table.columns if c.startswith("y_lag")]
     return [c for c in cols if c in table.columns]
