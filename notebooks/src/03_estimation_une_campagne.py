@@ -187,7 +187,7 @@ print(cmp.round(3).to_string())
 # ce verdict est un résultat : il dit que le design ne sait pas lire cette série, pas que la campagne n'a rien fait.
 
 # %%
-verdict = credibility(est.quality, sweep, removed)
+verdict = credibility(est.quality, sweep, removed, units=est.units)
 print(pd.Series(verdict).to_string())
 
 # %% [markdown]

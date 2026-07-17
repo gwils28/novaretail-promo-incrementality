@@ -137,6 +137,30 @@ export(fig, "nb05_by_family")
 plt.show()
 
 # %% [markdown]
+# **Attention : quand θ est absurde, c'est la donnée.** Un θ de plusieurs unités sur une famille voudrait dire
+# qu'une promotion multiplie les ventes par dix ou plus. Avant d'y croire, regarder la série. Pour PRODUCE,
+# `onpromotion` vaut ~200 un jour par semaine et 0 ou 1 les autres jours, et les ventes de 2014-2015 sont
+# enregistrées par trimestres entiers à quelques unités par jour entre des trimestres à plusieurs milliers : un
+# régime d'enregistrement, pas une demande. Le DML lit le contraste entre les deux régimes comme une réponse.
+# Les familles saisonnières (SCHOOL AND OFFICE SUPPLIES, LAWN AND GARDEN) promues au moment de leur pic ont le
+# même problème sous une autre forme : l'intensité n'y est pas « comme aléatoire » sachant des mois nationaux.
+
+# %%
+fam_check = "PRODUCE"
+pr = w.panel[(w.panel["family"] == fam_check) & ~w.panel["structural_zero"]]
+q = (pr.assign(trimestre=pr["date"].dt.to_period("Q"))
+     .groupby("trimestre", observed=True).agg(ventes_moy=("sales", "mean"), promo_moy=("onpromotion", "mean"),
+                                              part_jours_promus=("onpromotion", lambda s: (s > 0).mean())))
+print(q.round(2).to_string())
+s50 = w.wide_promo[(w.units[0][0], fam_check)].loc["2016-01-01":"2016-02-15"]
+fig, ax = plt.subplots(figsize=(11, 3))
+ax.bar(s50.index, s50.values, color=viz.BLUE)
+ax.set_title(f"{fam_check}, magasin {w.units[0][0]} : onpromotion un jour par semaine, 0 ou 1 les autres jours")
+ax.set_ylabel("articles en promotion")
+export(fig, "nb05_produce_pattern")
+plt.show()
+
+# %% [markdown]
 # ## 5. Dose-réponse par paliers
 #
 # **Intuition.** Le modèle linéaire impose une réponse proportionnelle. En remplaçant l'intensité par des

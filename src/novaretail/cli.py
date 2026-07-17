@@ -100,7 +100,7 @@ def cmd_estimate(args) -> None:
             sweep = placebo_time(y, X, camp, n_dates=PROTOCOL["placebo_dates"], nsim=500, seed=args.seed)
         if len(sweep):
             sweeps.append(sweep.assign(campaign_id=camp["campaign_id"]).reset_index())
-        verdict = credibility(est.quality, sweep if len(sweep) else None, removed)
+        verdict = credibility(est.quality, sweep if len(sweep) else None, removed, units=est.units)
         s = est.summary()
         betas = est.result.params.filter(like="beta.d_")
         rows.append({**camp.to_dict(), **s, **verdict, "removed_donors": len(removed), "isolation_rounds": len(removed),
@@ -247,6 +247,11 @@ def cmd_monitor(args) -> None:
            "reconciliation_drift_alarms": int(rec_drift["drift_alarm"].sum()),
            "reconciliation_drift_first_alarm": (str(rec_drift.index[rec_drift["drift_alarm"]][0])
                                                if rec_drift["drift_alarm"].any() else None),
+           "reconciliation_alarms_after_injection": int(rec_drift.loc[rec_drift.index >= pd.Period(mid, "M"),
+                                                                       "drift_alarm"].sum()),
+           "reconciliation_first_alarm_after_injection": (
+               str(rec_drift.index[(rec_drift.index >= pd.Period(mid, "M")) & rec_drift["drift_alarm"]][0])
+               if (rec_drift.loc[rec_drift.index >= pd.Period(mid, "M"), "drift_alarm"]).any() else None),
            "drift_injected_from": mid}
     _dump("monitor", rep)
     print(json.dumps(rep, indent=2, default=_json_default))

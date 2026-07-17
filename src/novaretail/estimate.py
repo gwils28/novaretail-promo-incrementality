@@ -23,7 +23,7 @@ from statsmodels.stats.diagnostic import acorr_ljungbox
 from novaretail.features import inverse, regressors, transform
 
 PROTOCOL = {"r2_min": 0.5, "coverage_range": (0.90, 0.98), "ljung_box_p_min": 0.01, "placebo_dates": 8,
-            "placebo_max_firing": 2, "min_pre_days": 120}
+            "placebo_max_firing": 2, "min_pre_days": 120, "wild_paths_max": 0.05}
 
 
 @dataclass
@@ -77,13 +77,29 @@ def pre_fit_quality(result: ImpactResult, burn: int = 14) -> dict:
             "n_pre_obs": int(ok.sum())}
 
 
+WILD_LOG_MARGIN = 3.0  # a path that climbs 3 log units (x20) above the series' own maximum is a divergent draw
+
+
 def effects_in_units(result: ImpactResult, campaign_end, kind: str = "log1p") -> dict:
-    """Sum of observed minus counterfactual sales over the campaign days, over the horizon after, and in total."""
+    """Sum of observed minus counterfactual sales over the campaign days, over the horizon after, and in total.
+
+    Read path by path: each simulated counterfactual path is back-transformed day by day, summed over the window,
+    and the effect is the observed sum minus that. The point estimate is the median over paths and the interval
+    its quantiles. Divergent paths (a parameter draw with an absurd level variance sends a few paths to values
+    the series never approached; on the sales scale `expm1` turns them into millions of units) are dropped and
+    counted: `wild_paths_share` is a credibility check, not a silent trim.
+    """
     y_post = inverse(result.y_post.values, kind)
-    paths = inverse(result.paths, kind)  # (nsim, n_post)
+    ceiling = float(np.nanmax(result.y.values)) + WILD_LOG_MARGIN
+    wild = (result.paths > ceiling).any(axis=1)
+    paths = inverse(result.paths[~wild], kind)  # (nsim - wild, n_post)
     during = result.cf.index <= pd.Timestamp(campaign_end)
     a = result.alpha
-    out = {}
+    out = {"wild_paths_share": float(wild.mean())}
+    if len(paths) < 50:
+        return {**out, **{f"{n}_{k}": np.nan for n in ("during", "after", "net")
+                          for k in ("units", "lower", "upper", "rel", "rel_lower", "rel_upper", "cf_units")},
+                "pull_forward_share": np.nan}
     for name, mask in (("during", during), ("after", ~during), ("net", np.ones_like(during))):
         if mask.sum() == 0:
             out.update({f"{name}_units": 0.0, f"{name}_lower": 0.0, f"{name}_upper": 0.0, f"{name}_rel": np.nan})
@@ -94,9 +110,10 @@ def effects_in_units(result: ImpactResult, campaign_end, kind: str = "log1p") ->
         lo, hi = np.quantile(eff, [a / 2, 1 - a / 2])
         rel = eff / cf
         rlo, rhi = np.quantile(rel, [a / 2, 1 - a / 2])
-        out.update({f"{name}_units": float(eff.mean()), f"{name}_lower": float(lo), f"{name}_upper": float(hi),
-                    f"{name}_rel": float(rel.mean()), f"{name}_rel_lower": float(rlo), f"{name}_rel_upper": float(rhi),
-                    f"{name}_cf_units": float(cf.mean()), f"{name}_days": int(mask.sum())})
+        out.update({f"{name}_units": float(np.median(eff)), f"{name}_lower": float(lo), f"{name}_upper": float(hi),
+                    f"{name}_rel": float(np.median(rel)), f"{name}_rel_lower": float(rlo),
+                    f"{name}_rel_upper": float(rhi), f"{name}_cf_units": float(np.median(cf)),
+                    f"{name}_days": int(mask.sum())})
     out["pull_forward_share"] = float(-out["after_units"] / out["during_units"]) if out["during_units"] > 0 else np.nan
     return out
 
@@ -114,7 +131,7 @@ def estimate_campaign(y: pd.Series, X: pd.DataFrame, campaign: pd.Series, pool: 
 
 
 def credibility(quality: dict, sweep: pd.DataFrame | None = None, removed_donors: list | None = None,
-                protocol: dict = PROTOCOL) -> dict:
+                protocol: dict = PROTOCOL, units: dict | None = None) -> dict:
     """Protocol verdict: every check named with its value and whether it passes; `measurable` is the conjunction."""
     lo, hi = protocol["coverage_range"]
     checks = {
@@ -122,6 +139,8 @@ def credibility(quality: dict, sweep: pd.DataFrame | None = None, removed_donors
         "fit_coverage": (quality["coverage_one_step"], lo <= quality["coverage_one_step"] <= hi),
         "fit_ljung_box": (quality["ljung_box_p"], quality["ljung_box_p"] >= protocol["ljung_box_p_min"]),
     }
+    if units is not None and "wild_paths_share" in units:
+        checks["paths_sane"] = (units["wild_paths_share"], units["wild_paths_share"] <= protocol["wild_paths_max"])
     if sweep is not None:
         firing = int(sweep["excludes_zero"].sum())
         checks["placebo_in_time"] = (firing, firing <= protocol["placebo_max_firing"])

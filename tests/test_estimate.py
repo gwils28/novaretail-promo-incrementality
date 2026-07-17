@@ -66,3 +66,22 @@ def test_augmented_sc_weights_and_shape(world):
     assert abs(est.weights.sum() - 1) < 1e-6 and (est.weights >= -1e-9).all()
     assert len(est.cf) == camp["length"] + camp["n_post"]
     assert np.isfinite(est.cum_effect) and est.cum_lower < est.cum_upper
+
+
+def test_wild_paths_are_dropped_and_counted(world):
+
+    from novaretail.estimate import effects_in_units
+
+    sp, wide, wide_raw, wide_promo, usable, cals, det = world
+    camp, truth = _pick(sp, det, wide_raw)
+    tab = eligible_donors(wide_raw, wide_promo, usable, sp.stores, camp, RegistryRule(max_pool=6))
+    y, X = assemble(wide, cals, camp, pool_units(tab))
+    est = estimate_campaign(y, X, camp, pool_units(tab), nsim=400)
+    r = est.result
+    r.paths = r.paths.copy()
+    r.paths[:20] += 12.0  # 5 percent of the paths leave for the stratosphere
+    u = effects_in_units(r, camp["end"])
+    assert u["wild_paths_share"] == pytest.approx(0.05)
+    assert abs(u["during_cf_units"] - est.units["during_cf_units"]) / est.units["during_cf_units"] < 0.2
+    v = credibility(est.quality, units=u)
+    assert v["check_paths_sane"]

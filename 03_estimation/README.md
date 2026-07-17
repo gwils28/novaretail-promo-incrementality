@@ -44,3 +44,38 @@ plus forte que celle du contrefactuel par campagne ; la concordance entre les de
 Banc d'essai de la méthode, pas une promotion : provinces frappées contre donneurs déclarés (provinces éloignées,
 Quito et Guayaquil exclues comme pôles de collecte). Le placebo dans l'espace sur les magasins donneurs montre
 l'interférence des achats d'aide d'urgence ; l'effet sur les provinces frappées est alors une borne basse.
+
+## Résultats (fichiers Kaggle)
+
+### Séisme (`nr quake`, `data/results/quake.json`)
+
+| Mesure | Valeur |
+|---|---|
+| Unités traitées / donneurs déclarés | magasins 43 (Esmeraldas), 53 et 54 (Manabí) / 20 magasins des provinces éloignées |
+| Effet sur 8 semaines, en unités | **+39 %** [+32 % ; +46 %], soit +572 000 unités |
+| Semaine par semaine | +10 % la première semaine, +33 % la deuxième, puis **+45 à +55 % jusqu'à la huitième** : l'effet ne s'estompe pas dans la fenêtre |
+| Placebo dans le temps | 1 fausse date sur 4 se déclenche |
+| Placebo dans l'espace | **5 magasins donneurs sur 20** ont un effet propre qui exclut zéro : l'interférence des achats d'aide d'urgence est visible, l'effet sur les provinces frappées est une borne basse |
+| Par famille (4 semaines) | toutes les familles de volume montent, GROCERY I le moins (+3 %), LINGERIE, SEAFOOD, BEAUTY le plus (+28 à +78 %) |
+
+**Lecture.** La méthode trouve un effet massif et daté. Mais sa forme (croissant, pas transitoire) ne ressemble pas
+à une ruée d'une semaine : magasins concurrents endommagés, population déplacée vers les villes des magasins,
+ou relation donneurs-cible qui a changé le 16 avril. Aucun test ne tranche ; sur une campagne, seul le rapprochement
+avec la marge réalisée le ferait. C'est exactement l'angle mort que la veille avait nommé.
+
+### Réponse à l'intensité (`nr dml`, `data/results/dml.json`, 400 000 lignes tirées au sort)
+
+| Spécification | θ (log-ventes par unité d'intensité) |
+|---|---|
+| pooled, retards + mois + tendance | 0,32 ± 0,006 |
+| pooled, sans retards | 0,59 ± 0,007 |
+| entraînement (< août 2016) / holdout (≥ août 2016) | 0,34 / 0,36 |
+| DoubleML (bibliothèque, 200 000 lignes) | 0,38 ± 0,009 |
+| sans mois ni tendance (première passe) | 0,15 à 0,25 |
+
+θ bouge de 0,15 à 0,59 selon ce que les nuisances contiennent. Les erreurs standard sont minuscules, la
+**sensibilité à la spécification** ne l'est pas : la date d'une promotion n'est pas « comme aléatoire » sachant des
+contrôles de calendrier, et le DML ne peut pas le réparer. La dose-réponse par paliers est monotone (0,15 → 0,31 du
+palier (0,2 ; 0,5] au palier > 1). Par famille, les θ de PRODUCE (5), SCHOOL AND OFFICE SUPPLIES (2,5) et LAWN AND
+GARDEN (1,4) ne sont pas des réponses : régime d'enregistrement de `onpromotion` (PRODUCE : ~200 un jour par
+semaine) ou promotions calées sur le pic saisonnier. Le calendrier n'utilise pas ces θ ; il utilise les campagnes.

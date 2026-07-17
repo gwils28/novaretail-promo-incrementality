@@ -135,8 +135,9 @@ def quake_by_family(panel, stores, treated, donors, holidays, pre_days=180, post
         y = np.log1p(w[tr].sum(axis=1, min_count=1)).interpolate(limit_direction="both")
         X = np.log1p(w[dn]).interpolate(limit_direction="both")
         X.columns = [f"d_{c}" for c in X.columns]
-        if (y.loc[:pre_end] > 0).mean() < 0.9 or X.std().min() == 0:
-            continue
+        treated_total = w[tr].sum(axis=1, min_count=1).loc[:pre_end]
+        if (y.loc[:pre_end] > 0).mean() < 0.9 or X.std().min() == 0 or treated_total.median() < 10:
+            continue  # a family the treated stores barely sell has no counterfactual worth reading
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             s = causal_impact(y, X, pre_end, nsim=nsim).summary()

@@ -24,7 +24,21 @@ un contrefactuel **connu** (campagnes plantées avec réponse par famille, creux
 d'un substitut déclaré). Il sert aux tests (`uv run pytest`) et a servi à développer toute la chaîne avant
 l'arrivée des fichiers Kaggle (`nr ingest --source synthetic`).
 
-## Résultats
+## Résultats (fichiers Kaggle, `nr ingest`, `nr campaigns`)
 
-Les chiffres de ce bloc sont dans `data/processed/manifest.json` et `data/results/campaigns.json` ; le README
-racine les reprend une fois la chaîne exécutée sur les fichiers Kaggle.
+| Mesure | Valeur |
+|---|---|
+| Lignes du fichier / attendues (54 × 33 × 1 688) | 3 000 888 / 3 008 016 ; les 7 128 lignes manquantes sont les quatre 25 décembre |
+| Part de lignes à ventes nulles dans le fichier | 31 % |
+| … dont structurelles après les cinq flags | **80 %** (magasin pas ouvert, famille jamais vendue : 53 couples, fermetures : 822 jours-magasin, famille pas encore référencée : 595 séries soit 9 % des lignes, séries de zéros ≥ 28 jours : 6 % des lignes) |
+| Zéros d'intermittence gardés comme observations | 6 % des lignes du panel |
+| Magasins ouverts en cours de période | 8 (dont le 52 en avril 2017) |
+| Sauts de `onpromotion` détectés / campagnes mesurables | 67 458 / **1 592** (2,4 %) ; refus : 63 302 trop courts, 802 pré-période occupée, 639 zéros structurels, 610 trop longs, 513 promotion dans les 30 jours précédents |
+| Durée des campagnes mesurables (déciles 10, 50, 90) | 3, 6, 20 jours ; 1 087 campagnes sur 1 592 ont un horizon tronqué par la campagne suivante |
+
+**Ce que les fichiers ont imposé.** Le cahier des charges prévoyait une décision sur des zéros absents ; les
+fichiers ont demandé l'inverse, trier des zéros présents : famille pas encore référencée dans le magasin (les
+séries commencent à des dates différentes selon la famille), trimestres entiers à zéro au milieu d'une série
+(PRODUCE, 2014 et 2015), et un `onpromotion` qui, pour PRODUCE, vaut ~200 un jour par semaine et 0 ou 1 les
+autres jours. Chacun de ces cas, pris pour une observation, fabrique un contrefactuel faux ; chacun a sa règle,
+déclarée dans `data.py`, et sa part dans le tableau ci-dessus.

@@ -43,6 +43,8 @@ def build_table(panel: pd.DataFrame, calendars: dict[int, pd.DataFrame], intensi
     g = p.groupby(["store_nbr", "family"], observed=True)["y"]
     for lag in lags:
         p[f"y_lag{lag}"] = g.shift(lag)
+    p["t"] = (p["date"] - p["date"].min()).dt.days  # a flexible time trend for the trees: the panel grows over
+    # the years and so does the promotion count, a confound that identities, months and lags do not remove
     p["store_code"] = p["store_nbr"].astype("category").cat.codes
     p["family_code"] = p["family"].astype("category").cat.codes
     p["month"] = p["date"].dt.to_period("M").astype(str)
@@ -50,7 +52,7 @@ def build_table(panel: pd.DataFrame, calendars: dict[int, pd.DataFrame], intensi
 
 
 def controls(table: pd.DataFrame, with_lags: bool = True) -> list[str]:
-    cols = CALENDAR_COLUMNS + MONTHS + ["oil_grad7", "store_code", "family_code"]
+    cols = CALENDAR_COLUMNS + MONTHS + ["oil_grad7", "t", "store_code", "family_code"]
     if with_lags:
         cols += [c for c in table.columns if c.startswith("y_lag")]
     return [c for c in cols if c in table.columns]
