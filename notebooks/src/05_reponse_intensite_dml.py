@@ -217,4 +217,6 @@ plt.show()
 #   contrôles » ; la validation croisée par blocs de mois respecte la dépendance temporelle.
 # - Les retards de la série sont un choix à montrer ; le holdout et DoubleML sont des contrôles de stabilité et
 #   d'implémentation, pas des preuves causales.
-# - La concordance avec les campagnes mesurées est le seul lien entre les deux designs ; elle est grossière.
+# - La concordance avec les campagnes mesurées est le seul lien entre les deux designs, et elle est **nulle** sur
+#   ce panel : θ × intensité prédit des lifts que le contrefactuel ne voit pas. Deux designs, deux hypothèses
+#   d'identification, deux réponses ; celle du contrefactuel est notée par sa couverture, celle du DML ne l'est pas.

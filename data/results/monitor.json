@@ -1,0 +1,14 @@
+{
+  "campaigns": 284,
+  "blocked_by_fit": 71,
+  "fpr_never_treated": 0.1724137931034483,
+  "fpr_alert_share": 0.6551724137931034,
+  "isolation_reviews": 114,
+  "donor_sign_changes": 223,
+  "reconciliation_clean_alarms": 1,
+  "reconciliation_drift_alarms": 12,
+  "reconciliation_drift_first_alarm": "2014-11",
+  "reconciliation_alarms_after_injection": 11,
+  "reconciliation_first_alarm_after_injection": "2016-07",
+  "drift_injected_from": "2016-04"
+}

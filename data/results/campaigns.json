@@ -1,0 +1,47 @@
+{
+  "runs": 67458,
+  "eligible": 1592,
+  "by_reason": {
+    "too_short": 63302,
+    "eligible": 1592,
+    "pre_not_quiet": 802,
+    "structural_zeros": 639,
+    "too_long": 610,
+    "promo_in_clean_tail": 513
+  },
+  "length_quantiles": {
+    "0.1": 3.0,
+    "0.5": 6.0,
+    "0.9": 20.0
+  },
+  "post_truncated": 1087,
+  "by_family_eligible": {
+    "AUTOMOTIVE": 23,
+    "BEAUTY": 12,
+    "BEVERAGES": 104,
+    "BREAD/BAKERY": 154,
+    "CELEBRATION": 45,
+    "CLEANING": 121,
+    "DAIRY": 108,
+    "DELI": 104,
+    "EGGS": 55,
+    "FROZEN FOODS": 100,
+    "GROCERY I": 131,
+    "HOME AND KITCHEN I": 51,
+    "HOME AND KITCHEN II": 25,
+    "HOME CARE": 98,
+    "LADIESWEAR": 13,
+    "LINGERIE": 13,
+    "LIQUOR,WINE,BEER": 60,
+    "MAGAZINES": 1,
+    "MEATS": 94,
+    "PERSONAL CARE": 73,
+    "PET SUPPLIES": 4,
+    "PLAYERS AND ELECTRONICS": 24,
+    "POULTRY": 55,
+    "PREPARED FOODS": 13,
+    "PRODUCE": 78,
+    "SCHOOL AND OFFICE SUPPLIES": 32,
+    "SEAFOOD": 1
+  }
+}

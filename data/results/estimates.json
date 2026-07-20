@@ -1,0 +1,95 @@
+{
+  "campaigns_run": 301,
+  "by_status": {
+    "measurable": 170,
+    "not_credible": 114,
+    "pool_too_small": 17
+  },
+  "measurable": 170,
+  "seconds": 651,
+  "during_rel_median": 0.01154551898429983,
+  "during_rel_quantiles": {
+    "0.1": -0.082,
+    "0.25": -0.025,
+    "0.5": 0.012,
+    "0.75": 0.078,
+    "0.9": 0.134
+  },
+  "pull_forward_share_median": -0.13979890849723614,
+  "share_net_lower_above_zero": 0.047058823529411764,
+  "share_net_upper_below_zero": 0.011764705882352941,
+  "checks_failed": {
+    "check_fit_r2": 55,
+    "check_fit_coverage": 21,
+    "check_fit_ljung_box": 5,
+    "check_paths_sane": 9,
+    "check_placebo_in_time": 48,
+    "check_donor_isolation": 0
+  },
+  "by_family": {
+    "AUTOMOTIVE": {
+      "size": 1,
+      "median": 0.5865958946416685
+    },
+    "BEVERAGES": {
+      "size": 15,
+      "median": -0.008345568495877701
+    },
+    "BREAD/BAKERY": {
+      "size": 22,
+      "median": 0.037989752219481074
+    },
+    "CLEANING": {
+      "size": 15,
+      "median": 0.006745181954377746
+    },
+    "DAIRY": {
+      "size": 17,
+      "median": -0.01253212956286559
+    },
+    "DELI": {
+      "size": 12,
+      "median": 0.038382494722318625
+    },
+    "EGGS": {
+      "size": 5,
+      "median": 0.0114462397088409
+    },
+    "FROZEN FOODS": {
+      "size": 5,
+      "median": 0.08716653535988292
+    },
+    "GROCERY I": {
+      "size": 17,
+      "median": 0.03522942319120745
+    },
+    "HOME CARE": {
+      "size": 14,
+      "median": 0.019897377720360862
+    },
+    "LIQUOR,WINE,BEER": {
+      "size": 9,
+      "median": 0.0027250395793078563
+    },
+    "MEATS": {
+      "size": 11,
+      "median": 0.04088701615078105
+    },
+    "PERSONAL CARE": {
+      "size": 9,
+      "median": 0.01253264598536724
+    },
+    "PLAYERS AND ELECTRONICS": {
+      "size": 1,
+      "median": 0.11797487521935299
+    },
+    "POULTRY": {
+      "size": 7,
+      "median": 0.0073749085340191365
+    },
+    "PRODUCE": {
+      "size": 10,
+      "median": 0.0319632663894411
+    }
+  }
+}

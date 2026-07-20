@@ -149,14 +149,16 @@ agg = plan.groupby("family").agg(hist=("hist_days", "sum"), new=("new_days", "su
 agg = agg.sort_values("new")
 fig, ax = plt.subplots(figsize=(9, 0.3 * len(agg) + 1.5))
 ypos = np.arange(len(agg))
-ax.barh(ypos - 0.2, agg["hist"], height=0.4, color=viz.MUTED, label="jours historiques")
-ax.barh(ypos + 0.2, agg["new"], height=0.4, color=[viz.BLUE if m else viz.MUTED for m in agg["measured"]],
-        label="jours réalloués (gris : famille non mesurée, inchangée)")
+from matplotlib.patches import Patch
+
+ax.barh(ypos - 0.2, agg["hist"], height=0.4, color=viz.MUTED)
+ax.barh(ypos + 0.2, agg["new"], height=0.4, color=[viz.BLUE if m else viz.MUTED for m in agg["measured"]])
+ax.legend(handles=[Patch(color=viz.MUTED, label="jours historiques (et familles non mesurées, inchangées)"),
+                   Patch(color=viz.BLUE, label="jours réalloués aux familles mesurées")], loc="lower right")
 ax.set_yticks(ypos, agg.index, fontsize=8)
 ax.set_xlabel("jours de campagne, tous magasins")
 ax.set_title(f"Réallocation : {cal['share_moved']:.0%} du budget déplacé, {cal['unspent_days']} jours non dépensés "
              f"(aucune valeur positive restante)")
-ax.legend(loc="lower right")
 export(fig, "nb07_calendar")
 plt.show()
 print(cal)

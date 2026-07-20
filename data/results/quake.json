@@ -1,0 +1,227 @@
+{
+  "treated": [
+    43,
+    53,
+    54
+  ],
+  "donors": [
+    5,
+    12,
+    13,
+    14,
+    15,
+    16,
+    19,
+    21,
+    22,
+    23,
+    25,
+    31,
+    33,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    50
+  ],
+  "summary": {
+    "n_post": 56,
+    "actual_avg": 10.473745099340116,
+    "pred_avg": 10.154381717118317,
+    "pred_avg_lower": 10.102112914864838,
+    "pred_avg_upper": 10.198356303297404,
+    "effect_avg": 0.3193633822217968,
+    "effect_avg_lower": 0.2753887960427113,
+    "effect_avg_upper": 0.37163218447527624,
+    "effect_cum": 17.884349404420618,
+    "effect_cum_lower": 15.421772578391833,
+    "effect_cum_upper": 20.81140233061547,
+    "rel_effect": 0.031450795441677365,
+    "rel_lower": 0.02700325306561532,
+    "rel_upper": 0.036787569849468536,
+    "p_tail": 0.0,
+    "excludes_zero": true,
+    "units_effect": 572137.2233822196,
+    "units_lower": 500269.53918016696,
+    "units_upper": 642457.4393467784,
+    "units_rel": 0.3892572592887923,
+    "units_rel_lower": 0.32384187456086744,
+    "units_rel_upper": 0.45804496068259726,
+    "units_excludes_zero": true
+  },
+  "placebo_time_firing": 1,
+  "placebo_time_dates": 4,
+  "donors_flagged": [
+    "d_13",
+    "d_16",
+    "d_37",
+    "d_38",
+    "d_41"
+  ],
+  "weekly": {
+    "1": {
+      "rel_effect": 0.099,
+      "rel_lower": 0.005,
+      "rel_upper": 0.184
+    },
+    "2": {
+      "rel_effect": 0.333,
+      "rel_lower": 0.263,
+      "rel_upper": 0.406
+    },
+    "3": {
+      "rel_effect": 0.351,
+      "rel_lower": 0.266,
+      "rel_upper": 0.447
+    },
+    "4": {
+      "rel_effect": 0.46,
+      "rel_lower": 0.37,
+      "rel_upper": 0.559
+    },
+    "5": {
+      "rel_effect": 0.478,
+      "rel_lower": 0.379,
+      "rel_upper": 0.584
+    },
+    "6": {
+      "rel_effect": 0.451,
+      "rel_lower": 0.36,
+      "rel_upper": 0.557
+    },
+    "7": {
+      "rel_effect": 0.553,
+      "rel_lower": 0.447,
+      "rel_upper": 0.681
+    },
+    "8": {
+      "rel_effect": 0.479,
+      "rel_lower": 0.374,
+      "rel_upper": 0.59
+    }
+  },
+  "by_family": {
+    "PLAYERS AND ELECTRONICS": {
+      "rel_effect": 0.226,
+      "rel_lower": 0.04,
+      "rel_upper": 0.463,
+      "excludes_zero": true
+    },
+    "GROCERY II": {
+      "rel_effect": 0.153,
+      "rel_lower": 0.1,
+      "rel_upper": 0.211,
+      "excludes_zero": true
+    },
+    "CELEBRATION": {
+      "rel_effect": 0.096,
+      "rel_lower": 0.062,
+      "rel_upper": 0.132,
+      "excludes_zero": true
+    },
+    "PREPARED FOODS": {
+      "rel_effect": 0.089,
+      "rel_lower": 0.039,
+      "rel_upper": 0.14,
+      "excludes_zero": true
+    },
+    "AUTOMOTIVE": {
+      "rel_effect": 0.086,
+      "rel_lower": -0.022,
+      "rel_upper": 0.209,
+      "excludes_zero": false
+    },
+    "FROZEN FOODS": {
+      "rel_effect": 0.078,
+      "rel_lower": 0.064,
+      "rel_upper": 0.093,
+      "excludes_zero": true
+    },
+    "PERSONAL CARE": {
+      "rel_effect": 0.072,
+      "rel_lower": 0.066,
+      "rel_upper": 0.078,
+      "excludes_zero": true
+    },
+    "POULTRY": {
+      "rel_effect": 0.067,
+      "rel_lower": 0.031,
+      "rel_upper": 0.101,
+      "excludes_zero": true
+    },
+    "BREAD/BAKERY": {
+      "rel_effect": 0.059,
+      "rel_lower": 0.051,
+      "rel_upper": 0.065,
+      "excludes_zero": true
+    },
+    "DAIRY": {
+      "rel_effect": 0.053,
+      "rel_lower": 0.039,
+      "rel_upper": 0.067,
+      "excludes_zero": true
+    },
+    "DELI": {
+      "rel_effect": 0.051,
+      "rel_lower": 0.04,
+      "rel_upper": 0.062,
+      "excludes_zero": true
+    },
+    "HOME AND KITCHEN I": {
+      "rel_effect": 0.051,
+      "rel_lower": -0.031,
+      "rel_upper": 0.142,
+      "excludes_zero": false
+    },
+    "MEATS": {
+      "rel_effect": 0.051,
+      "rel_lower": 0.038,
+      "rel_upper": 0.063,
+      "excludes_zero": true
+    },
+    "PRODUCE": {
+      "rel_effect": 0.048,
+      "rel_lower": 0.045,
+      "rel_upper": 0.052,
+      "excludes_zero": true
+    },
+    "CLEANING": {
+      "rel_effect": 0.046,
+      "rel_lower": 0.043,
+      "rel_upper": 0.048,
+      "excludes_zero": true
+    },
+    "HOME CARE": {
+      "rel_effect": 0.044,
+      "rel_lower": 0.04,
+      "rel_upper": 0.048,
+      "excludes_zero": true
+    },
+    "EGGS": {
+      "rel_effect": 0.041,
+      "rel_lower": 0.018,
+      "rel_upper": 0.064,
+      "excludes_zero": true
+    },
+    "BEVERAGES": {
+      "rel_effect": 0.033,
+      "rel_lower": 0.019,
+      "rel_upper": 0.047,
+      "excludes_zero": true
+    },
+    "GROCERY I": {
+      "rel_effect": 0.03,
+      "rel_lower": 0.028,
+      "rel_upper": 0.033,
+      "excludes_zero": true
+    },
+    "HOME AND KITCHEN II": {
+      "rel_effect": -0.071,
+      "rel_lower": -0.182,
+      "rel_upper": 0.056,
+      "excludes_zero": false
+    }
+  }
+}

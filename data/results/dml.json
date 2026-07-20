@@ -1,0 +1,330 @@
+{
+  "rows": 400000,
+  "pooled_with_lags": {
+    "theta": {
+      "intensity": 0.32266355698767524
+    },
+    "se": {
+      "intensity": 0.005816703080586847
+    },
+    "n": 400000,
+    "r2_partial": 0.00903915097728436
+  },
+  "pooled_without_lags": {
+    "theta": {
+      "intensity": 0.5863787265665182
+    },
+    "se": {
+      "intensity": 0.006795479941492072
+    },
+    "n": 400000,
+    "r2_partial": 0.02198758377329768
+  },
+  "by_family": {
+    "PRODUCE": {
+      "theta": 5.0555,
+      "se": 0.3405,
+      "n": 12594,
+      "share_promoted_days": 0.5594,
+      "lower": 4.3881,
+      "upper": 5.723
+    },
+    "SCHOOL AND OFFICE SUPPLIES": {
+      "theta": 2.4679,
+      "se": 0.099,
+      "n": 7813,
+      "share_promoted_days": 0.1148,
+      "lower": 2.274,
+      "upper": 2.6619
+    },
+    "LAWN AND GARDEN": {
+      "theta": 1.4223,
+      "se": 0.0864,
+      "n": 9886,
+      "share_promoted_days": 0.1013,
+      "lower": 1.253,
+      "upper": 1.5916
+    },
+    "SEAFOOD": {
+      "theta": 1.0686,
+      "se": 0.053,
+      "n": 13611,
+      "share_promoted_days": 0.2746,
+      "lower": 0.9647,
+      "upper": 1.1726
+    },
+    "GROCERY II": {
+      "theta": 0.9815,
+      "se": 0.0751,
+      "n": 13984,
+      "share_promoted_days": 0.0699,
+      "lower": 0.8344,
+      "upper": 1.1286
+    },
+    "HARDWARE": {
+      "theta": 0.7103,
+      "se": 0.1145,
+      "n": 13838,
+      "share_promoted_days": 0.0024,
+      "lower": 0.4859,
+      "upper": 0.9347
+    },
+    "LIQUOR,WINE,BEER": {
+      "theta": 0.5714,
+      "se": 0.0394,
+      "n": 14209,
+      "share_promoted_days": 0.2921,
+      "lower": 0.4942,
+      "upper": 0.6487
+    },
+    "HOME APPLIANCES": {
+      "theta": 0.5391,
+      "se": 0.0755,
+      "n": 9743,
+      "share_promoted_days": 0.0011,
+      "lower": 0.3912,
+      "upper": 0.687
+    },
+    "LINGERIE": {
+      "theta": 0.5343,
+      "se": 0.0591,
+      "n": 14023,
+      "share_promoted_days": 0.0324,
+      "lower": 0.4184,
+      "upper": 0.6502
+    },
+    "BEAUTY": {
+      "theta": 0.521,
+      "se": 0.0176,
+      "n": 14116,
+      "share_promoted_days": 0.1808,
+      "lower": 0.4865,
+      "upper": 0.5555
+    },
+    "LADIESWEAR": {
+      "theta": 0.4763,
+      "se": 0.1309,
+      "n": 8175,
+      "share_promoted_days": 0.012,
+      "lower": 0.2197,
+      "upper": 0.7329
+    },
+    "HOME AND KITCHEN I": {
+      "theta": 0.4641,
+      "se": 0.0248,
+      "n": 12613,
+      "share_promoted_days": 0.2633,
+      "lower": 0.4156,
+      "upper": 0.5127
+    },
+    "AUTOMOTIVE": {
+      "theta": 0.4135,
+      "se": 0.0331,
+      "n": 14068,
+      "share_promoted_days": 0.0515,
+      "lower": 0.3486,
+      "upper": 0.4785
+    },
+    "HOME AND KITCHEN II": {
+      "theta": 0.3747,
+      "se": 0.0197,
+      "n": 12753,
+      "share_promoted_days": 0.343,
+      "lower": 0.3362,
+      "upper": 0.4133
+    },
+    "FROZEN FOODS": {
+      "theta": 0.3682,
+      "se": 0.0258,
+      "n": 13895,
+      "share_promoted_days": 0.5839,
+      "lower": 0.3176,
+      "upper": 0.4188
+    },
+    "EGGS": {
+      "theta": 0.2964,
+      "se": 0.0403,
+      "n": 14006,
+      "share_promoted_days": 0.446,
+      "lower": 0.2174,
+      "upper": 0.3754
+    },
+    "POULTRY": {
+      "theta": 0.2823,
+      "se": 0.034,
+      "n": 14012,
+      "share_promoted_days": 0.3232,
+      "lower": 0.2157,
+      "upper": 0.349
+    },
+    "CELEBRATION": {
+      "theta": 0.2626,
+      "se": 0.0437,
+      "n": 11040,
+      "share_promoted_days": 0.0639,
+      "lower": 0.177,
+      "upper": 0.3482
+    },
+    "DELI": {
+      "theta": 0.2537,
+      "se": 0.022,
+      "n": 14128,
+      "share_promoted_days": 0.6414,
+      "lower": 0.2107,
+      "upper": 0.2968
+    },
+    "BABY CARE": {
+      "theta": 0.2482,
+      "se": 0.0726,
+      "n": 3162,
+      "share_promoted_days": 0.0047,
+      "lower": 0.106,
+      "upper": 0.3905
+    },
+    "PLAYERS AND ELECTRONICS": {
+      "theta": 0.2199,
+      "se": 0.0531,
+      "n": 11177,
+      "share_promoted_days": 0.0157,
+      "lower": 0.1158,
+      "upper": 0.3239
+    },
+    "PREPARED FOODS": {
+      "theta": 0.1904,
+      "se": 0.0264,
+      "n": 13797,
+      "share_promoted_days": 0.2881,
+      "lower": 0.1386,
+      "upper": 0.2422
+    },
+    "MEATS": {
+      "theta": 0.1791,
+      "se": 0.0264,
+      "n": 14131,
+      "share_promoted_days": 0.3475,
+      "lower": 0.1274,
+      "upper": 0.2309
+    },
+    "PET SUPPLIES": {
+      "theta": 0.172,
+      "se": 0.0169,
+      "n": 11044,
+      "share_promoted_days": 0.0651,
+      "lower": 0.1388,
+      "upper": 0.2052
+    },
+    "HOME CARE": {
+      "theta": 0.1517,
+      "se": 0.0162,
+      "n": 11349,
+      "share_promoted_days": 0.6446,
+      "lower": 0.1201,
+      "upper": 0.1834
+    },
+    "DAIRY": {
+      "theta": 0.1279,
+      "se": 0.0129,
+      "n": 13813,
+      "share_promoted_days": 0.7522,
+      "lower": 0.1025,
+      "upper": 0.1532
+    },
+    "BEVERAGES": {
+      "theta": 0.1141,
+      "se": 0.0086,
+      "n": 14149,
+      "share_promoted_days": 0.8449,
+      "lower": 0.0971,
+      "upper": 0.131
+    },
+    "BREAD/BAKERY": {
+      "theta": 0.1054,
+      "se": 0.012,
+      "n": 14122,
+      "share_promoted_days": 0.6401,
+      "lower": 0.0819,
+      "upper": 0.129
+    },
+    "GROCERY I": {
+      "theta": 0.0903,
+      "se": 0.0132,
+      "n": 14098,
+      "share_promoted_days": 0.9302,
+      "lower": 0.0643,
+      "upper": 0.1162
+    },
+    "CLEANING": {
+      "theta": 0.0747,
+      "se": 0.0161,
+      "n": 14182,
+      "share_promoted_days": 0.8167,
+      "lower": 0.0432,
+      "upper": 0.1062
+    },
+    "PERSONAL CARE": {
+      "theta": -0.0158,
+      "se": 0.015,
+      "n": 13879,
+      "share_promoted_days": 0.621,
+      "lower": -0.0452,
+      "upper": 0.0136
+    },
+    "MAGAZINES": {
+      "theta": -0.2306,
+      "se": 0.2104,
+      "n": 11454,
+      "share_promoted_days": 0.0029,
+      "lower": -0.6431,
+      "upper": 0.1818
+    }
+  },
+  "dose_response": {
+    "(0.2, 0.5]": {
+      "theta": 0.154,
+      "se": 0.0032,
+      "lower": 0.1477,
+      "upper": 0.1603,
+      "n_rows": 36691.0
+    },
+    "(0.5, 0.8]": {
+      "theta": 0.1928,
+      "se": 0.0046,
+      "lower": 0.1837,
+      "upper": 0.2019,
+      "n_rows": 15569.0
+    },
+    "(0.8, 1.0]": {
+      "theta": 0.2598,
+      "se": 0.0073,
+      "lower": 0.2455,
+      "upper": 0.2741,
+      "n_rows": 8926.0
+    },
+    "(1.0, 10.0]": {
+      "theta": 0.3132,
+      "se": 0.0074,
+      "lower": 0.2987,
+      "upper": 0.3277,
+      "n_rows": 6079.0
+    }
+  },
+  "holdout": {
+    "train": {
+      "theta": 0.34025534746888275,
+      "se": 0.011374972710180549,
+      "n": 264403
+    },
+    "holdout": {
+      "theta": 0.36213173562464923,
+      "se": 0.007102708087915269,
+      "n": 135597
+    }
+  },
+  "holdout_split": "2016-08-15",
+  "doubleml": {
+    "theta": 0.3803052463501285,
+    "se": 0.008649280946066016,
+    "n": 200000
+  },
+  "seconds": 173
+}
