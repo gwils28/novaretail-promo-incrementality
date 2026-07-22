@@ -26,7 +26,43 @@ campagnes, quels donneurs, quels placebos), et ce design se note sur vérité co
 
 ## Résultats
 
-*Section remplie à partir de `data/results/*.json` une fois la chaîne exécutée sur les fichiers Kaggle.*
+Chiffres de `data/results/*.json`, produits par le CLI sur les fichiers Kaggle (détail et lecture dans chaque bloc).
+
+| Question | Réponse mesurée |
+|---|---|
+| Combien de promotions sont mesurables ? | **1 592 campagnes** sur 67 458 sauts de `onpromotion` (2,4 %) : la plupart des sauts sont trop courts ou tombent dans une pré-période déjà promue. 301 ont été estimées (stratifiées par famille), **170 passent le protocole** de crédibilité (56 %). |
+| Quel est l'uplift d'une campagne ? | Lift médian pendant la campagne **+1,2 %** (déciles 10 et 90 : −8 % et +13 %). 7 % des campagnes ont une borne basse positive pendant la campagne, 5 % sur le net (campagne + 14 jours) ; 1 à 2 % ont une borne haute négative. Somme nette sur les 170 campagnes : **−0,6 %** du contrefactuel. |
+| Y a-t-il du *pull-forward* ? | Non mesurable à ce niveau : la part médiane des unités reprises après la campagne est −14 % (un léger surplus après, pas un creux), avec des intervalles qui contiennent zéro presque partout. |
+| Le design est-il fiable ? | Sur vérité plantée dans les vraies séries : couverture à 95 % de **0,83 à 0,90** pour le niveau local, 0,5 à 0,7 pour OLS, contrôle synthétique, DiD ; **17 % de faux positifs** à effet nul ; puissance 20 % pour +5 %, 40 % pour +15 %. Le protocole rejette un quart des campagnes par le placebo dans le temps, à ce taux, par construction. |
+| Le séisme ? | **+39 %** [+32 ; +46] en unités sur 8 semaines dans les provinces frappées, effet croissant et non transitoire ; 5 donneurs sur 20 bougent avec le choc (achats d'aide d'urgence) : l'effet est une borne basse et l'interférence est visible parce qu'on sait où regarder. |
+| La réponse à l'intensité ? | θ pooled de **0,15 à 0,59** selon la spécification des nuisances (retards, mois, tendance) ; holdout 0,36, DoubleML 0,38 ; dose-réponse monotone ; **concordance nulle** (corrélation 0,02) avec les lifts des 170 campagnes mesurées. L'instabilité est le résultat : la date d'une promotion n'est pas « comme aléatoire » sachant un calendrier. PRODUCE (θ = 5) est un artefact d'enregistrement. |
+| Le monitoring ? | Le placebo roulant sur du vide est en alerte sur deux tiers de la période (> 10 %) ; l'alarme de réconciliation se déclenche trois mois après une dérive de 2 %/mois injectée, avec une fausse alarme sur 44 mois. |
+| Le calendrier ? | 48 jours déplacés sur 2 327 (2 %), **64 % du budget non dépensé** sur la borne basse : presque aucune campagne ne vaut ses jours à ce niveau de preuve. |
+
+### Recul sincère
+
+- **Le soupçon de la direction tient, mais la preuve est faible.** La somme nette des 170 campagnes crédibles est
+  nulle à −0,6 %, et seules 7 % ont un lift dont la borne basse dépasse zéro. Mais le même design ne détecte
+  qu'une fois sur cinq un lift de 5 % planté dans ces séries. « Pas d'effet mesurable » et « pas d'effet » sont
+  deux phrases différentes ; ce projet n'autorise que la première.
+- **Les vraies séries coûtent dix points de couverture.** La veille mesurait 0,92 à 0,94 sur panels synthétiques
+  pour le niveau local ; ici 0,83 à 0,90, et 17 % de faux positifs. Zéros, valeurs extrêmes, changements de régime
+  d'enregistrement : la différence entre un panel propre et un fichier.
+- **Le traitement était le problème, pas l'estimateur.** `onpromotion` est un compte avec un fond permanent, un
+  pic hebdomadaire sur PRODUCE, des régimes qui changent en 2016. La moitié du temps du projet est allée à décider
+  ce qu'est un zéro et ce qu'est une campagne ; c'est là que se jouait la validité, pas dans le choix entre BSTS et
+  contrôle synthétique (qui, lui, se tranche par la couverture : niveau local).
+- **Ce que la méthode ne voit pas**, et que rien ici ne peut voir : une relation donneurs-cible qui casse à la
+  date de campagne. Le séisme en donne peut-être un exemple (effet croissant sur huit semaines). Seul un
+  rapprochement avec une marge réalisée, ou un **holdout réel** sur quelques campagnes, tranche. C'est la
+  recommandation principale à NovaRetail : mesurer moins de campagnes, mais en ancrer quelques-unes par
+  l'expérimentation.
+- **Les θ du DML ne sont pas des élasticités**, et leur sensibilité à la spécification dit que l'hypothèse
+  « intensité comme aléatoire sachant les contrôles » n'est pas tenable sur ce panel. Ils sont rapportés pour
+  cela, pas pour le calendrier.
+- **Taille des études** : 30 fenêtres par cellule du backtesting (±0,1 sur chaque couverture), 300 campagnes sur
+  1 592 (13 minutes de calcul), un seul tirage de la stratification. Les ordres de grandeur sont stables d'une
+  exécution à l'autre ; la deuxième décimale ne l'est pas.
 
 ## Blocs
 
