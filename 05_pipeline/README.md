@@ -33,6 +33,19 @@ d'**estimations et de leurs vérifications**.
 `data/processed/manifest.json` : sha256, taille et nombre de lignes de chaque fichier brut, plus le rapport de
 construction du panel. Un run est reproductible à manifeste égal ; DVC n'est pas nécessaire à cette échelle.
 
+## Temps de calcul (fichiers Kaggle, portable 8 cœurs)
+
+| Étape | Durée |
+|---|---|
+| `nr ingest` + `nr campaigns` | 2 s + 30 s |
+| `nr estimate --max 300 --param-draws 40` | 13 min (2,2 s par campagne : registre, isolation, contrefactuel, 8 placebos) |
+| `nr backtest --n 30` | 2 min |
+| `nr quake`, `nr dml --sample 400000` | 15 s, 3 min |
+| `make notebooks` | 10 min |
+
+Les 1 592 campagnes mesurables tiendraient en une heure ; la planification hebdomadaire n'estime que les
+campagnes nouvelles.
+
 ## Ce qui n'est pas fait
 
 Pas de Docker, pas de cloud, pas d'Airflow, pas de `statsforecast` (les baselines de prévision pure n'apportent

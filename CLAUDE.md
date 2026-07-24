@@ -26,5 +26,12 @@ uv run nr --help                            # CLI: ingest, panel, campaigns, est
 - Treatment is `onpromotion` intensity, not a flag; campaigns are detected windows (`campaigns.py`) and the
   protocol thresholds in `plan.md` section 4 were fixed before any result: do not tune them to the results.
 - Favorita has no price column: never call the DML output a price elasticity.
+- Run times on the Kaggle files: `nr estimate --max 300 --param-draws 40` about 13 minutes, `nr backtest --n 30`
+  about 2 minutes, `nr dml` about 3 minutes, `nr quake` 15 seconds. Never `pkill -f` a pattern that appears in
+  the shell command running the kill (it kills the shell): use a `[b]racketed` pattern.
+- Structural zeros have five flags (`before_opening`, `never_sold`, `closed`, `before_first_sale`, `zero_run`);
+  PRODUCE's `onpromotion` is a weekly spike, not a campaign, and its DML theta is an artefact: do not "fix" it.
+- The units read drops divergent simulated paths and reports their share (`wild_paths_share`); a campaign with
+  more than 5 percent of them is not credible by protocol.
 - Notebook sources (percent format) live in `notebooks/src/` and are committed next to the executed notebooks;
   `make notebooks` re-executes, `uv run python tools/nbbuild.py SRC OUT` rebuilds one from its source.
