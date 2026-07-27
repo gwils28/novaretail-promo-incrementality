@@ -1,12 +1,15 @@
 # Bloc 5 · Pipeline : Dagster en local, MLflow en registre d'estimations
 
 Code : `pipeline/definitions.py`, `src/novaretail/cli.py`, `workspace.py`.
+Pas à pas (lancement, interfaces, API) : [mode opératoire](MODE_OPERATOIRE.md).
 
 ```bash
 uv sync --group pipeline                                   # dagster, dagster-webserver, mlflow
+export DAGSTER_HOME=$PWD/.dagster && mkdir -p $DAGSTER_HOME  # historique des runs conservé entre sessions
 uv run dagster dev -f pipeline/definitions.py              # UI sur http://localhost:3000
+uv run dagster asset materialize -f pipeline/definitions.py --select monitoring   # quelques secondes
 uv run dagster asset materialize -f pipeline/definitions.py --select '*'
-uv run mlflow ui --backend-store-uri file://$PWD/mlruns
+uv run mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5000   # UI sur http://localhost:5000
 ```
 
 ## Les assets
@@ -22,6 +25,9 @@ et le pipeline lisent une seule source de vérité. La planification hebdomadair
 rejoue la chaîne.
 
 ## Ce que MLflow enregistre
+
+Backend SQLite (`mlflow.db`, artefacts sous `mlruns/`) : MLflow 3 refuse le backend fichier. Trois runs par
+chaîne complète : `estimates`, `backtest`, `monitoring`.
 
 Pas des modèles : chaque campagne réajuste son propre contrefactuel. Le registre contient, par run, les
 paramètres (plafond du pool, tirages de paramètres, nombre de trajectoires, graine), les métriques résumées
