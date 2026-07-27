@@ -64,6 +64,19 @@ Chiffres de `data/results/*.json`, produits par le CLI sur les fichiers Kaggle (
   1 592 (13 minutes de calcul), un seul tirage de la stratification. Les ordres de grandeur sont stables d'une
   exécution à l'autre ; la deuxième décimale ne l'est pas.
 
+## En un paragraphe
+
+Le traitement a dû être construit (un saut de `onpromotion` au-dessus de son fond, avec une pré-période calme), le
+pool de contrôle a été un registre de règles plutôt qu'un choix par l'ajustement, et les zéros ont été triés en
+cinq sortes avant la moindre estimation. Sur ces bases, le contrefactuel à niveau local de la veille, noté par sa
+couverture sur vérité plantée dans les vraies séries (0,83 à 0,90, contre 0,5 à 0,7 pour les estimateurs à
+erreurs iid), mesure 170 campagnes crédibles dont la somme nette est nulle, avec une puissance qui ne permet pas de
+dire que les petites promotions ne font rien. Le séisme montre la méthode à l'œuvre sur un choc réel et montre
+l'interférence des donneurs ; le DML montre ce qui arrive quand l'hypothèse d'identification ne tient pas ; le
+monitoring montre que le seul signal qui voit une relation qui casse est la marge réalisée. La recommandation à
+NovaRetail est de mesurer moins et d'expérimenter un peu : quelques campagnes avec magasins témoins tirés au sort
+ancreraient tout le reste.
+
 ## Blocs
 
 | Bloc | Dossier | Commandes | Contenu |
