@@ -11,7 +11,7 @@ Git identity: the user only (noreply email in the local config); never add Co-Au
 ```bash
 uv run pytest -m "not slow and not data"   # unit tests; `data` needs data/raw Favorita files, `slow` runs studies
 uv run ruff check src tests tools pipeline  # line length 120
-uv run nr --help                            # CLI: ingest, panel, campaigns, estimate, backtest, quake, dml, monitor
+uv run nr --help                            # CLI: ingest, campaigns, estimate, backtest, quake, dml, monitor, calendar
 ```
 
 ## Constraints that are easy to break
