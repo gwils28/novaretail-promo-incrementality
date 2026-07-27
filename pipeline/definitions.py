@@ -134,7 +134,9 @@ def placebo_guard(context) -> dg.AssetCheckResult:
         return dg.AssetCheckResult(passed=True, metadata={"note": "monitor not run yet"})
     rep = json.loads(f.read_text())
     fpr = rep.get("fpr_never_treated")
-    return dg.AssetCheckResult(passed=fpr is None or fpr <= 0.10, metadata={"fpr_never_treated": fpr or 0.0})
+    if fpr is None:
+        return dg.AssetCheckResult(passed=True, metadata={"note": "no never-treated placebo in the backtest"})
+    return dg.AssetCheckResult(passed=fpr <= 0.10, metadata={"fpr_never_treated": fpr})
 
 
 weekly = dg.ScheduleDefinition(name="weekly_refresh", cron_schedule="0 6 * * 1",
