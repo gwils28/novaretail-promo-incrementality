@@ -100,9 +100,10 @@ def backtest(context: dg.AssetExecutionContext, config: EstimateConfig) -> dg.Ma
 
     cmd_backtest(Namespace(n=30, seed=config.seed))
     rep = json.loads((RESULTS / "backtest.json").read_text())
-    _mlflow_log("backtest", {"n_per_spec": 30, "seed": config.seed}, RESULTS / "backtest.json",
-                [RESULTS / "planted_scores.parquet"])
-    return dg.MaterializeResult(metadata={"rows": rep["rows"], "seconds": rep["seconds"]})
+    run_id = _mlflow_log("backtest", {"n_per_spec": 30, "seed": config.seed}, RESULTS / "backtest.json",
+                         [RESULTS / "planted_scores.parquet"])
+    return dg.MaterializeResult(metadata={"rows": rep["rows"], "seconds": rep["seconds"],
+                                          "mlflow_run_id": run_id or "mlflow not installed"})
 
 
 @dg.asset(deps=[estimates, backtest], group_name="monitoring", description="Signals and reconciliation")
