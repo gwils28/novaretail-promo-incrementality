@@ -1,17 +1,20 @@
 """Dagster definitions: the chain ingestion -> features -> campaign estimation -> calendar, local mode.
 
 Each asset wraps one CLI step and materialises the same files under data/results, so that a notebook, the CLI
-and the pipeline read one source of truth. MLflow (file backend under mlruns/) logs the parameters and the
+and the pipeline read one source of truth. MLflow (SQLite backend in mlflow.db, artifacts under mlruns/; the file
+backend is refused by MLflow 3, override with MLFLOW_TRACKING_URI) logs the parameters and the
 summary metrics of every estimation run, and registers the estimates table as an artifact: the model registry
 of this project is a registry of *estimates with their validity checks*, not of fitted models, because every
 campaign refits its own counterfactual.
 
     uv run dagster dev -f pipeline/definitions.py        # UI on http://localhost:3000
     uv run dagster asset materialize -f pipeline/definitions.py --select '*'
+    uv run mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5000
 """
 
 
 import json
+import os
 from argparse import Namespace
 from pathlib import Path
 
@@ -20,6 +23,7 @@ import dagster as dg
 from novaretail.data import PROCESSED, RESULTS, ROOT
 
 MLRUNS = ROOT / "mlruns"
+TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", f"sqlite:///{ROOT / 'mlflow.db'}")
 
 
 def _mlflow_log(run_name: str, params: dict, metrics_file: Path, artifacts: list[Path]) -> str | None:
@@ -27,7 +31,9 @@ def _mlflow_log(run_name: str, params: dict, metrics_file: Path, artifacts: list
         import mlflow
     except ImportError:
         return None
-    mlflow.set_tracking_uri(f"file://{MLRUNS}")
+    mlflow.set_tracking_uri(TRACKING_URI)
+    if mlflow.get_experiment_by_name("novaretail-promo-incrementality") is None:
+        mlflow.create_experiment("novaretail-promo-incrementality", artifact_location=MLRUNS.as_uri())
     mlflow.set_experiment("novaretail-promo-incrementality")
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
@@ -105,7 +111,10 @@ def monitoring(context: dg.AssetExecutionContext, config: EstimateConfig) -> dg.
 
     cmd_monitor(Namespace(seed=config.seed))
     rep = json.loads((RESULTS / "monitor.json").read_text())
-    return dg.MaterializeResult(metadata={k: v for k, v in rep.items() if isinstance(v, int | float)})
+    run_id = _mlflow_log("monitoring", {"seed": config.seed}, RESULTS / "monitor.json",
+                         [RESULTS / "rolling_fpr.parquet", RESULTS / "reconciliation_drift.parquet"])
+    return dg.MaterializeResult(metadata={**{k: v for k, v in rep.items() if isinstance(v, int | float)},
+                                          "mlflow_run_id": run_id or "mlflow not installed"})
 
 
 @dg.asset(deps=[estimates], group_name="decision", description="Campaign-day reallocation at constant budget")
